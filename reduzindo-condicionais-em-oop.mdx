@@ -1,42 +1,66 @@
 ---
-title:  'Reduzindo condicionais em Linguagens Orientadas a Objetos'
-date:  '2024-01-20'
+title: 'Reduzindo condicionais em Linguagens Orientadas a Objetos'
+date: '2024-01-20'
 tags: ['ruby']
 ---
 
-###  Introdução 🚀
- 
-Um assunto muito abordado quando estamos começando nossa carreira, é a tal da "logica proposicional", os famosos `if's` `else's` que tanto amamos e utilizamos para solucionar tanto problemas simples quanto complexos.  E uma das maiores dificultades que enfratamos nessa hora, é como reduzir ao maximo o numero e a complexidade das condicionais que estamos usando.
+### Introdução 🚀
+
+Um assunto muito abordado quando estamos começando nossa carreira, é a tal da "logica proposicional", os famosos `if's`  `else's` que tanto amamos e utilizamos para solucionar tanto problemas simples quanto complexos. E uma das maiores dificultades que enfratamos nessa hora, é como reduzir ao maximo o numero e a complexidade das condicionais que estamos usando.
 
 #### Felizmente existe a Orientação a Objetos 😁
 
 ### O que são objetos?💡
-Para entendimento geral vamos adotar um objeto, como toda instancia que possui uma classe de definição, hoje a maior parte das linguagens modernas aceitam Orientação a Objetos, mesmo que não seja o paradigma original ou mais usado. 
 
+Para entendimento geral vamos adotar um objeto, como toda instancia que possui uma classe de definição, hoje a maior parte das linguagens modernas aceitam Orientação a Objetos, mesmo que não seja o paradigma original ou mais usado.
 
 ### Vamos ao exemplo pratico
 
-Nós fomos contrados para desenvolver um sistema que abriga animais, a primeiro momento só vamos abrigar cachorros, então nós resolvemos implementar a classe `Animal`, que é composta pelo atributo `name` e pelo metodo `sound`
+Nós fomos contrados para desenvolver um sistema que abriga animais, e a unica coisa que foi solicitado é que nós guardemos o tipo do animal e um id,  então nós resolvemos implementar a classe `Animal`, que é composta pelo atributo `name`, `id` e pelo metodo `sound`
+
 ```ruby
-class Animal
-  attr_reader :name
-  
-  def initialize(name:)
-    @kind = name
+class  Animal
+  attr_reader  :name, :id
+
+  def  initialize(name:, id:)
+   @name =  name
+   @id = id
   end
 
   def sound
-    puts "Hi! Im #{name}"
+    puts  "Sounds like a #{name}"
   end
 end
+
 ```
 Agora podemos instanciar um `objeto` da classe `Animal`, e chamar o metodo `sound` que irá nos exibir a mensagem `Sounds like a animal`
 
 ```ruby
-dog = Animal.new
+dog =  Animal.new(name: "dog")
 dog.sound
->>> "Sounds like a animal"
+>>>  "Sounds like a dog"
 ```
 
-Muito bem! Porém agora nosso sistema pode abrigar `mais de um tipo` de animal, e seria bom conseguirmos diferenciar o retorno do metodo usando outros tipos. 
+Muito bem! Agora chegou mais uma tarefa, precisamos criar um metodo chamado `meals` que retorna o numero de refeições que esse animal precisa. Então tivemos a `brilhante` ideia de fazer uma condicional baseando no atributo `name`
 
+```ruby
+class  Animal
+  ...
+  def meals
+    if name == "dog"
+      "3 meals"
+    else if name == "bird"
+      "2 meals"
+    else
+      "1 meal"
+    end 
+  end
+end
+```
+Muito bem! Nós atendemos nosso problema, porém ja conseguimos sentir uma certa dificuldade com os problemos animais, vamos precisar de 15 `ifs` se continuarmos assim 🤣🤣
+
+### Solução
+
+Bom, já entendemos que objetos tem implementações diferentes, e que eles possuem metodos especificos para cada implementação, sendo assim vamos usar dessa capacidade para remover `todos` os `ifs` desse nosso problema.
+
+Apenas para exemplificar, vamos implementar uma classe chamada `Dog` e uma chamada `Bird`

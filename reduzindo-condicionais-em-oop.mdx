@@ -47,9 +47,9 @@ Muito bem! Agora chegou mais uma tarefa, precisamos especializar o metodo `meals
 class  Animal
   ...
   def meals
-    if name == "dog"
+    if kind == "dog"
       "Needs 3 meals"
-    else if name == "bird"
+    elsif kind == "bird"
       "Needs 2 meals"
     end
   end
@@ -86,7 +86,7 @@ Agora vamos usar a magia da `Composição`, muito parecido com `Injeção de dep
 class Animal
   attr_reader  :kind, :kind_klass
 
-  def initialize(kind:, :kind_klass)
+  def initialize(kind:, kind_klass:)
    @kind =  kind
    @kind_klass = kind_klass
   end
@@ -113,7 +113,7 @@ Bom, e quando não sabemos exatamente qual é o animal? Talvez seu primeiro impu
 class Animal
   attr_reader  :kind, :kind_klass
 
-  def initialize(kind:, :kind_klass)
+  def initialize(kind:, kind_klass:)
    @kind =  kind
    @kind_klass = kind_klass
   end
@@ -155,4 +155,4 @@ animal.meals
 >>> "Needs 1 meals"
 ```
 
-Dessa forma nós já temos um `fallback` para caso o ususario não saiba qual animal é, ou caso ainda não exista uma classe implementada pra ele.
+Dessa forma nós já temos um `fallback` para caso o usuario não saiba qual animal é, ou caso ainda não exista uma classe implementada pra ele.

@@ -1,12 +1,12 @@
 ---
-title: 'Reduzindo condicionais em Linguagens Orientadas a Objetos'
-date: '2024-01-20'
-tags: ['ruby']
+title: "Reduzindo condicionais em Linguagens Orientadas a Objetos (Ruby)"
+date: "2024-01-20"
+tags: ["ruby"]
 ---
 
 ### Introdução 🚀
 
-Um assunto muito abordado quando estamos começando nossa carreira, é a tal da "logica proposicional", os famosos `if's`  `else's` que tanto amamos e utilizamos para solucionar tanto problemas simples quanto complexos. E uma das maiores dificultades que enfratamos nessa hora, é como reduzir ao maximo o numero e a complexidade das condicionais que estamos usando.
+Um assunto muito abordado quando estamos começando nossa carreira, é a tal da "logica proposicional", os famosos `if's` `else's` que tanto amamos e utilizamos para solucionar tanto problemas simples quanto complexos. E uma das maiores dificultades que enfratamos nessa hora, é como reduzir ao maximo o numero e a complexidade das condicionais que estamos usando.
 
 #### Felizmente existe a Orientação a Objetos 😁
 
@@ -16,51 +16,143 @@ Para entendimento geral vamos adotar um objeto, como toda instancia que possui u
 
 ### Vamos ao exemplo pratico
 
-Nós fomos contrados para desenvolver um sistema que abriga animais, e a unica coisa que foi solicitado é que nós guardemos o tipo do animal e um id,  então nós resolvemos implementar a classe `Animal`, que é composta pelo atributo `name`, `id` e pelo metodo `sound`
+Nós fomos contrados para desenvolver um sistema que abriga animais, e a unica coisa que foi solicitado é que seja possivel retornar o tipo do animal e quantas refeições ele precisa, então nós resolvemos implementar a classe `Animal`, que é composta pelo atributo `kind`, `id` e pelo metodo `meals`
 
 ```ruby
 class  Animal
-  attr_reader  :name, :id
+  attr_reader  :kind
 
-  def  initialize(name:, id:)
-   @name =  name
-   @id = id
+  def  initialize(kind:)
+   @kind =  kind
   end
 
-  def sound
-    puts  "Sounds like a #{name}"
+  def meals
+    puts  "Needs 2 meals"
   end
 end
 
 ```
-Agora podemos instanciar um `objeto` da classe `Animal`, e chamar o metodo `sound` que irá nos exibir a mensagem `Sounds like a animal`
+
+Agora podemos instanciar um `objeto` da classe `Animal`, e chamar o metodo `meals` que irá nos exibir a mensagem `Needs 2 meals`
 
 ```ruby
-dog =  Animal.new(name: "dog")
-dog.sound
->>>  "Sounds like a dog"
+dog =  Animal.new(kind: "dog")
+dog.meals
+>>>  "Needs 2 meals"
 ```
 
-Muito bem! Agora chegou mais uma tarefa, precisamos criar um metodo chamado `meals` que retorna o numero de refeições que esse animal precisa. Então tivemos a `brilhante` ideia de fazer uma condicional baseando no atributo `name`
+Muito bem! Agora chegou mais uma tarefa, precisamos especializar o metodo `meals` para retornar o numero de refeições que esse animal precisa dependendo do `kind` dele. Então tivemos a `brilhante` ideia de fazer uma condicional baseando no atributo `kind`
 
 ```ruby
 class  Animal
   ...
   def meals
     if name == "dog"
-      "3 meals"
+      "Needs 3 meals"
     else if name == "bird"
-      "2 meals"
-    else
-      "1 meal"
-    end 
+      "Needs 2 meals"
+    end
   end
 end
 ```
-Muito bem! Nós atendemos nosso problema, porém ja conseguimos sentir uma certa dificuldade com os problemos animais, vamos precisar de 15 `ifs` se continuarmos assim 🤣🤣
 
-### Solução
+Muito bem! Nós atendemos nosso problema, porém ja conseguimos sentir uma certa dificuldade com mais animais, vamos precisar de 15 `ifs` se continuarmos assim 🤣🤣
 
-Bom, já entendemos que objetos tem implementações diferentes, e que eles possuem metodos especificos para cada implementação, sendo assim vamos usar dessa capacidade para remover `todos` os `ifs` desse nosso problema.
+### Great times are coming!
+
+Bom, já entendemos que objetos tem implementações diferentes, e que eles possuem metodos especificos para cada implementação, sendo assim vamos usar essa capacidade para remover `todos` os `ifs` desse nosso problema.
 
 Apenas para exemplificar, vamos implementar uma classe chamada `Dog` e uma chamada `Bird`
+
+```ruby
+class Dog
+  def meals
+    "Needs 2 meals"
+  end
+end
+```
+
+```ruby
+class Bird
+  def meals
+    "Needs 1 meal"
+  end
+end
+```
+
+Agora vamos usar a magia da `Composição`, muito parecido com `Injeção de dependencia`, para compor essa nova classe `Animal`
+
+```ruby
+class Animal
+  attr_reader  :kind, :kind_klass
+
+  def initialize(kind:, :kind_klass)
+   @kind =  kind
+   @kind_klass = kind_klass
+  end
+
+  def meals
+    kind_klass.meals
+  end
+end
+```
+
+Otimo! Dessa forma não precisamos mais nos preocupar com ifs, cada classe e cada `tipo` de animal irá se comportar como quiser, sem a necessidade de tratarmos na classe `Animal` já que ela mesmo pode ser varios animais diferentes!
+
+```ruby
+dog =  Animal.new(kind: "dog", kind_klass: Dog)
+dog.meals
+>>>  "Needs 2 meals"
+```
+
+### Bonus
+
+Bom, e quando não sabemos exatamente qual é o animal? Talvez seu primeiro impulso seja fazer algo parecido com isso:
+
+```ruby
+class Animal
+  attr_reader  :kind, :kind_klass
+
+  def initialize(kind:, :kind_klass)
+   @kind =  kind
+   @kind_klass = kind_klass
+  end
+
+  def meals
+    kind_klass&.meals || "Needs 1 meals"
+  end
+end
+
+animal = Animal.new(kind: "Unknown", kind_klass: nil)
+animal.meals
+>>> "Needs 1 meals"
+```
+
+Resolve nosso problema, mas não estavamos tentando fugir de condicionais? Nós já preparamos o terreno, então vamos apenas nos aproveitar de ter feito uma boa arquitetura!
+
+```ruby
+class DefaultAnimal
+  def meals
+    "Needs 1 meals"
+  end
+end
+
+class Animal
+  attr_reader  :kind, :kind_klass
+
+  def initialize(kind:, kind_klass: DefaultAnimal)
+   @kind =  kind
+   @kind_klass = kind_klass
+  end
+
+  def meals
+    kind_klass.meals
+  end
+end
+
+animal = Animal.new(kind: "Unknown")
+animal.meals
+>>> "Needs 1 meals"
+```
+
+Dessa forma nós já temos um `fallback` para caso o ususario não saiba qual animal é, ou caso ainda não exista uma classe implementada pra ele.

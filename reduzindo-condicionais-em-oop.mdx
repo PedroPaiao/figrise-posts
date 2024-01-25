@@ -6,7 +6,7 @@ tags: ["ruby"]
 
 ### Introdução 🚀
 
-Um assunto muito abordado quando estamos começando nossa carreira, é a tal da "logica proposicional", os famosos `if's` `else's` que tanto amamos e utilizamos para solucionar tanto problemas simples quanto complexos. E uma das maiores dificultades que enfratamos nessa hora, é como reduzir ao maximo o numero e a complexidade das condicionais que estamos usando.
+Um assunto muito abordado quando estamos começando nossa carreira, é a tal da "logica proposicional", os famosos `if's` `else's` que amamos e utilizamos para solucionar problemas simples e complexos. E uma das maiores dificultades que enfrentamos nessa hora, é como reduzir ao maximo o numero e a complexidade de condicionais.
 
 #### Felizmente existe a Orientação a Objetos 😁
 
@@ -41,16 +41,16 @@ dog.meals
 >>>  "Needs 2 meals"
 ```
 
-Muito bem! Agora chegou mais uma tarefa, precisamos especializar o metodo `meals` para retornar o numero de refeições que esse animal precisa dependendo do `kind` dele. Então tivemos a `brilhante` ideia de fazer uma condicional baseando no atributo `kind`
+Muito bem! Agora chegou mais uma tarefa, precisamos especializar o metodo `meals` para retornar o numero de refeições que esse animal precisa dependendo do `kind` dele. Então tivemos a `brilhante` ideia de fazer uma condicional utilizando o atributo `kind`
 
 ```ruby
 class  Animal
   ...
   def meals
     if kind == "dog"
-      "Needs 3 meals"
+      puts "Needs 3 meals"
     elsif kind == "bird"
-      "Needs 2 meals"
+      puts "Needs 2 meals"
     end
   end
 end
@@ -88,11 +88,11 @@ class Animal
 
   def initialize(kind:, kind_klass:)
    @kind =  kind
-   @kind_klass = kind_klass
+   @kind_klass = kind_klass.new
   end
 
   def meals
-    kind_klass.meals
+    puts kind_klass.meals
   end
 end
 ```
@@ -115,11 +115,15 @@ class Animal
 
   def initialize(kind:, kind_klass:)
    @kind =  kind
-   @kind_klass = kind_klass
+   @kind_klass = kind_klass.new
   end
 
   def meals
-    kind_klass&.meals || "Needs 1 meals"
+    if kind_klass
+      puts kind_klass.meals
+    else
+      puts "Needs 1 meals"
+    end
   end
 end
 
@@ -142,7 +146,7 @@ class Animal
 
   def initialize(kind:, kind_klass: DefaultAnimal)
    @kind =  kind
-   @kind_klass = kind_klass
+   @kind_klass = kind_klass.new
   end
 
   def meals
@@ -156,3 +160,5 @@ animal.meals
 ```
 
 Dessa forma nós já temos um `fallback` para caso o usuario não saiba qual animal é, ou caso ainda não exista uma classe implementada pra ele.
+
+Obrigado pela atenção e espero ter ajudado! 👍
